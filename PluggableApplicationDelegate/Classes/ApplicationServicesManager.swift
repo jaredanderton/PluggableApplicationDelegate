@@ -6,6 +6,9 @@
 //  Copyright © 2017 Fernando Martín Ortiz. All rights reserved.
 //
 
+// copied from PR to support swift 4.2:
+// https://github.com/fmo91/PluggableApplicationDelegate/blob/a97e36f15c35ef8a66f82478e8535967538c38c2/PluggableApplicationDelegate/Classes/ApplicationServicesManager.swift
+
 import UIKit
 import CloudKit
 
@@ -59,7 +62,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     
     
     @available(iOS 6.0, *)
-    open func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    open func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         var result = false
         for service in __services {
             if service.application?(application, willFinishLaunchingWithOptions: launchOptions) ?? false {
@@ -70,7 +73,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     }
     
     @available(iOS 3.0, *)
-    open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         var result = false
         for service in __services {
             if service.application?(application, didFinishLaunchingWithOptions: launchOptions) ?? false {
@@ -118,7 +121,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     }
     
     @available(iOS 9.0, *)
-    open func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    open func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         var result = false
         for service in __services {
             if service.application?(app, open: url, options: options) ?? false {
@@ -164,17 +167,17 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-//    open func application(_ application: UIApplication, willChangeStatusBarFrame newStatusBarFrame: CGRect) {
-//        for service in __services {
-//            service.application?(application, willChangeStatusBarFrame: newStatusBarFrame)
-//        }
-//    }
-//
-//    open func application(_ application: UIApplication, didChangeStatusBarFrame oldStatusBarFrame: CGRect) {
-//        for service in __services {
-//            service.application?(application, didChangeStatusBarFrame: oldStatusBarFrame)
-//        }
-//    }
+    //    open func application(_ application: UIApplication, willChangeStatusBarFrame newStatusBarFrame: CGRect) {
+    //        for service in __services {
+    //            service.application?(application, willChangeStatusBarFrame: newStatusBarFrame)
+    //        }
+    //    }
+    //
+    //    open func application(_ application: UIApplication, didChangeStatusBarFrame oldStatusBarFrame: CGRect) {
+    //        for service in __services {
+    //            service.application?(application, didChangeStatusBarFrame: oldStatusBarFrame)
+    //        }
+    //    }
     
     
     // This callback will be made upon calling -[UIApplication registerUserNotificationSettings:]. The settings the user has granted to the application will be passed in as the second argument.
@@ -381,7 +384,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     // Constants representing common extension point identifiers are provided further down.
     // If unimplemented, the default behavior is to allow the extension point identifier.
     @available(iOS 8.0, *)
-    open func application(_ application: UIApplication, shouldAllowExtensionPointIdentifier extensionPointIdentifier: UIApplicationExtensionPointIdentifier) -> Bool {
+    open func application(_ application: UIApplication, shouldAllowExtensionPointIdentifier extensionPointIdentifier: UIApplication.ExtensionPointIdentifier) -> Bool {
         var result = false
         for service in __services {
             if service.application?(application, shouldAllowExtensionPointIdentifier: extensionPointIdentifier) ?? true {
@@ -393,7 +396,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     
     
     @available(iOS 6.0, *)
-    open func application(_ application: UIApplication, viewControllerWithRestorationIdentifierPath identifierComponents: [Any], coder: NSCoder) -> UIViewController? {
+    open func application(_ application: UIApplication, viewControllerWithRestorationIdentifierPath identifierComponents: [String], coder: NSCoder) -> UIViewController? {
         for service in __services {
             if let viewController = service.application?(application, viewControllerWithRestorationIdentifierPath: identifierComponents, coder: coder) {
                 return viewController
@@ -461,7 +464,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     // invoked with the user activity. Invoking the restorationHandler is optional. It may be copied and invoked later, and it will bounce to the main thread to complete its work and call
     // restoreUserActivityState on all objects.
     @available(iOS 8.0, *)
-    open func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Swift.Void) -> Bool {
+    open func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         let returns = apply({ (service, restorationHandler) -> Bool? in
             service.application?(application, continue: userActivity, restorationHandler: restorationHandler)
         }, completionHandler: { results in
@@ -495,7 +498,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     // You should use the CKShareMetadata object's shareURL and containerIdentifier to schedule a CKAcceptSharesOperation, then start using
     // the resulting CKShare and its associated record(s), which will appear in the CKContainer's shared database in a zone matching that of the record's owner.
     @available(iOS 10.0, *)
-    open func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShareMetadata) {
+    open func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata) {
         for service in __services {
             service.application?(application, userDidAcceptCloudKitShareWith: cloudKitShareMetadata)
         }
